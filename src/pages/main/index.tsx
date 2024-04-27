@@ -1,6 +1,7 @@
 import { MainMenu } from '@/components/Menu/MainMenu';
 import { SecondaryMenu } from '@/components/Menu/SecondaryMenu';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
+import InputTask from '@/components/Task/InputTask';
 
 export default function Main() {
 	return (
@@ -19,12 +20,17 @@ export default function Main() {
 						</div>
 						<div className="flex items-center">
 							<span className="w-16 h-16 bg-neutral-50 border-4 border-emerald-400 rounded-full mr-4"></span>
-							<p className="text-[#56577E] font-bold text-cl">Bia Silva</p>
+							<p className="text-[#56577E] font-bold text-cl">Gabriel Augusto</p>
 						</div>
 					</div>
 				</Sidebar>
 
-				<div className="p-7">Tarefas</div>
+				<div className="p-7 w-full">
+					<div>
+						<h2 className='mb-8'>Hoje</h2>
+						<InputTask />
+					</div>
+				</div>
 			</div>
 		</main>
 	);
