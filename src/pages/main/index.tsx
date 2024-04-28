@@ -1,8 +1,9 @@
+import { Icon } from '@/components/Icon';
 import { MainMenu } from '@/components/Menu/MainMenu';
-import { SecondaryMenu } from '@/components/Menu/SecondaryMenu';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import InputTask from '@/components/Task/InputTask';
 import ListItem from '@/components/Task/ListItem';
+import Image from 'next/image';
 
 export default function Main() {
 	return (
@@ -11,8 +12,9 @@ export default function Main() {
 				<Sidebar>
 					<div className="flex flex-col justify-between h-full">
 						<div>
-							<div className="flex items-center mb-7">
-								<span className="w-9 h-9 bg-slate-800 rounded-md mr-4"></span> MyTask
+							<div className="flex items-center gap-2 mb-7">
+								<Icon icon="Today" />
+								<h1 className='text-[#23243D] font-medium text-[20px]'>MyTask</h1>
 							</div>
 
 							<div className="grid ">
@@ -23,7 +25,7 @@ export default function Main() {
 						</div>
 
 						<div className="flex items-center mt-auto">
-							<span className="w-16 h-16 bg-neutral-50 border-4 border-emerald-400 rounded-full mr-4"></span>
+							<Image className='w-16 h-16 rounded-full mr-4 flex items-center justify-center' src="/userProfile.png" width={70} height={70} alt="Gabriel Augusto" />
 							<p className="text-[#56577E] font-bold text-cl">Gabriel Augusto</p>
 						</div>
 					</div>
@@ -31,15 +33,26 @@ export default function Main() {
 
 				<div className="p-7 w-full">
 					<div>
-						<h2 className='mb-8'>Hoje</h2>
+						<div className="flex my-4 gap-x-[10px]">
+							<Icon icon="List" />
+							<h2 className='text-[#767798] font-bold text-[16px] uppercase'>Hoje</h2>
+						</div>
 						<InputTask />
 						<div className='flex flex-col w-full'>
-							<h3>Para fazer</h3>
+							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
 
-							<ul className='flex w-full'>
+							<ul className='flex flex-col gap-2 w-full'>
 								<li className='w-full'>
 									<ListItem
-										dateToDo='13 Set. 23'
+										dateToDo={new Date()}
+										isDone={true}
+									>
+										Estudar React
+									</ListItem>
+								</li>
+								<li className='w-full'>
+									<ListItem
+										dateToDo={new Date()}
 										isDone={true}
 									>
 										Estudar React

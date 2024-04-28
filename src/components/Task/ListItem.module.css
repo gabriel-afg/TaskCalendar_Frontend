@@ -3,5 +3,5 @@
 }
 
 .props {
-	@apply flex;
+	@apply flex items-center gap-x-[15px] text-[#94A1B7] text-[12px] font-semibold;
 }
