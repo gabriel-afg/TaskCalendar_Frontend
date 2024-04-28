@@ -35,13 +35,25 @@ export default function Main() {
 					<div>
 						<div className="flex my-4 gap-x-[10px]">
 							<Icon icon="List" />
-							<h2 className='text-[#767798] font-bold text-[16px] uppercase'>Hoje</h2>
+							<h2 className='flex text-[#767798] items-center font-bold text-[16px] uppercase'>Hoje</h2>
+							<div>
+								<input className="border-2 ml-5 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+									type="search" name="search" placeholder="Procurar Task por título" />
+							</div>
 						</div>
 						<InputTask />
-						<div className='flex flex-col w-full'>
+						<div className='flex flex-col overflow-y-auto w-full'>
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
 
 							<ul className='flex flex-col gap-2 w-full'>
+								<li className='w-full'>
+									<ListItem
+										dateToDo={new Date()}
+										isDone={true}
+									>
+										Estudar React
+									</ListItem>
+								</li>
 								<li className='w-full'>
 									<ListItem
 										dateToDo={new Date()}
