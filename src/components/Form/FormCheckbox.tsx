@@ -12,7 +12,7 @@ export function FormCheckbox({ isDone }: { isDone: boolean }) {
 	return (
 		<div className="flex cursor-pointer" onClick={handleClick}>
 			<div className={`${Styles.checkbox} ${checked ? Styles.checked : ''}`}>
-				{isDone && <Icon name="done"/>}
+				{checked && <Icon icon="Done" />}
 				<input type="checkbox" defaultChecked={isDone} />
 			</div>
 		</div>
