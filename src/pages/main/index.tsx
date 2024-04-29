@@ -3,9 +3,20 @@ import { MainMenu } from '@/components/Menu/MainMenu';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import InputTask from '@/components/Task/InputTask';
 import ListItem from '@/components/Task/ListItem';
+import api from '@/service/axios';
+import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 
-export default function Main() {
+interface Task {
+	id: string;
+	title: string;
+	description: string;
+	date: string;
+	duration: string;
+}
+
+export default function Main({ dailyTasks }: any) {
+
 	return (
 		<main className="p-7">
 			<div className="container mx-auto bg-white flex rounded-[20px] shadow-md overflow-hidden">
@@ -37,7 +48,7 @@ export default function Main() {
 							<Icon icon="List" />
 							<h2 className='flex text-[#767798] items-center font-bold text-[16px] uppercase'>Hoje</h2>
 							<div>
-								<input className="border-2 ml-5 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+								<input className="border-2 ml-5 min-w-[300px] border-gray-300 bg-white h-10 px-3 rounded-lg text-sm focus:outline-none"
 									type="search" name="search" placeholder="Procurar Task por título" />
 							</div>
 						</div>
@@ -46,30 +57,16 @@ export default function Main() {
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
 
 							<ul className='flex flex-col gap-2 w-full'>
-								<li className='w-full'>
-									<ListItem
-										dateToDo={new Date()}
-										isDone={true}
-									>
-										Estudar React
-									</ListItem>
-								</li>
-								<li className='w-full'>
-									<ListItem
-										dateToDo={new Date()}
-										isDone={true}
-									>
-										Estudar React
-									</ListItem>
-								</li>
-								<li className='w-full'>
-									<ListItem
-										dateToDo={new Date()}
-										isDone={true}
-									>
-										Estudar React
-									</ListItem>
-								</li>
+								{dailyTasks.map((task: Task) => (
+									<li className='w-full' key={task.id}>
+										<ListItem
+											dateToDo={new Date(task.date)}
+											isDone={false}
+										>
+											{task.title}
+										</ListItem>
+									</li>
+								))}
 							</ul>
 						</div>
 					</div>
@@ -78,3 +75,14 @@ export default function Main() {
 		</main>
 	);
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+	const response = await api.get('/tasks/today');
+  const dailyTasks = response.data;
+
+  return {
+    props: {
+      dailyTasks,
+    },
+  };
+};

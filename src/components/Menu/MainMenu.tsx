@@ -7,10 +7,10 @@ export function MainMenu() {
 				Hoje
 			</ItemMenu>
 			<ItemMenu icon="Tomorrow" counter="2">
-				Amanhã
+				Semana
 			</ItemMenu>
 			<ItemMenu icon="NextWeek" counter="5">
-				Próximos 7 dias
+				Mês
 			</ItemMenu>
 		</div>
 	);
