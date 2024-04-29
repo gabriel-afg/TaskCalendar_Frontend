@@ -90,6 +90,7 @@ export default function Main() {
 									<li className='w-full' key={task.id}>
 										<ListItem
 											dateToDo={new Date(task.date)}
+											description={task.description}
 											isDone={false}
 										>
 											{task.title}
@@ -104,14 +105,3 @@ export default function Main() {
 		</main>
 	);
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-	const response = await api.get('/tasks/today');
-	const dailyTasks = response.data;
-
-	return {
-		props: {
-			dailyTasks,
-		},
-	};
-};

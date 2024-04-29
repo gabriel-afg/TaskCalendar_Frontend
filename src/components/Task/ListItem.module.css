@@ -1,7 +1,15 @@
 .item {
-	@apply flex justify-between w-full bg-white border-b border-[#D5D9E1] p-[15px] hover:bg-[#F5F6F8];
+  @apply flex justify-between w-full bg-white border-b border-[#D5D9E1] p-[15px] hover:bg-[#F5F6F8];
 }
 
 .props {
-	@apply flex items-center gap-x-[15px] text-[#94A1B7] text-[12px] font-semibold;
+  @apply flex items-center gap-x-[15px] text-[#94A1B7] text-[12px] font-semibold;
+}
+
+.title {
+  @apply text-[16px] font-bold;
+}
+
+.description {
+  @apply text-sm text-gray-500;
 }
