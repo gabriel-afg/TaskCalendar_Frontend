@@ -6,6 +6,7 @@ interface MainMenuProps {
 	taskCountToday: number;
 	taskCountWeek: number;
 	taskCountMonth: number;
+	taskCountAll: number;
 }
 
 export function MainMenu({
@@ -13,9 +14,18 @@ export function MainMenu({
 	setSelectedPeriod, 
 	taskCountToday, 
 	taskCountWeek, 
-	taskCountMonth }:MainMenuProps) {
+	taskCountMonth,
+	taskCountAll }:MainMenuProps) {
 	return (
 		<div className="grid gap-3">
+			<ItemMenu
+        icon="Today"
+        counter={taskCountAll.toString()}
+        active={selectedPeriod === 'all'}
+        onClick={() => setSelectedPeriod('all')}
+      >
+        Todas as tasks
+      </ItemMenu>
 			<ItemMenu
         icon="Today"
         counter={taskCountToday.toString()}

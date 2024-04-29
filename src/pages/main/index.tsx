@@ -17,11 +17,12 @@ interface Task {
 }
 
 export default function Main() {
-	const [selectedPeriod, setSelectedPeriod] = useState('today');
+	const [selectedPeriod, setSelectedPeriod] = useState('all');
 	const [tasks, setTasks] = useState([]);
 	const [taskCountToday, setTaskCountToday] = useState(0);
   const [taskCountWeek, setTaskCountWeek] = useState(0);
   const [taskCountMonth, setTaskCountMonth] = useState(0);
+	const [taskCountAll, setTaskCountAll] = useState(0);
 
 	useEffect(() => {
     const fetchTasks = async (period: string, setTaskCount: (count: number) => void) => {
@@ -35,6 +36,7 @@ export default function Main() {
     fetchTasks('today', setTaskCountToday);
     fetchTasks('week', setTaskCountWeek);
     fetchTasks('month', setTaskCountMonth);
+		fetchTasks('all', setTaskCountAll);
   }, [selectedPeriod]);
 
 	return (
@@ -56,6 +58,7 @@ export default function Main() {
 									taskCountWeek={taskCountWeek} 
 									taskCountMonth={taskCountMonth} 
 									setSelectedPeriod={setSelectedPeriod} 
+									taskCountAll={taskCountAll}
 									/>
 								</div>
 							</div>
