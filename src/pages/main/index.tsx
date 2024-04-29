@@ -86,7 +86,7 @@ export default function Main() {
 					<div>
 						<div className="flex my-4 gap-x-[10px]">
 							<Icon icon="List" />
-							<h2 className='flex text-[#767798] items-center font-bold text-[16px] uppercase'>Hoje</h2>
+							<h2 className='flex text-[#767798] items-center font-bold text-[16px] uppercase'>{selectedPeriod}</h2>
 							<div>
 								<input
 									className="border-2 ml-5 min-w-[300px] border-gray-300 bg-white h-10 px-3 rounded-lg text-sm focus:outline-none"
@@ -99,10 +99,9 @@ export default function Main() {
 							</div>
 						</div>
 						<InputTask />
-						<div className='flex flex-col overflow-y-auto w-full'>
+						<div className='flex flex-col w-full'>
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
-
-							<ul className='flex flex-col gap-2 w-full'>
+							<ul className='flex flex-col gap-2 w-full overflow-auto max-h-[550px]'>
 								{(searchResults || tasks).map((task: Task) => (
 									<li className='w-full' key={task.id}>
 										<ListItem
