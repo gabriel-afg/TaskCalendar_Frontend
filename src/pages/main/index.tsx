@@ -46,7 +46,7 @@ export default function Main() {
 					<div className="flex flex-col justify-between h-full">
 						<div>
 							<div className="flex items-center gap-2 mb-7">
-								<Icon icon="Today" />
+								<Icon icon="Calendar" />
 								<h1 className='text-[#23243D] font-medium text-[20px]'>MyTask</h1>
 							</div>
 

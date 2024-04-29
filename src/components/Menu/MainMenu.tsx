@@ -19,7 +19,7 @@ export function MainMenu({
 	return (
 		<div className="grid gap-3">
 			<ItemMenu
-        icon="Today"
+        icon="Archive"
         counter={taskCountAll.toString()}
         active={selectedPeriod === 'all'}
         onClick={() => setSelectedPeriod('all')}
