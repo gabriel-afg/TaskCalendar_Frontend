@@ -6,6 +6,7 @@ import ListItem from '@/components/Task/ListItem';
 import api from '@/service/axios';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface Task {
 	id: string;
@@ -15,7 +16,26 @@ interface Task {
 	duration: string;
 }
 
-export default function Main({ dailyTasks }: any) {
+export default function Main() {
+	const [selectedPeriod, setSelectedPeriod] = useState('today');
+	const [tasks, setTasks] = useState([]);
+	const [taskCountToday, setTaskCountToday] = useState(0);
+  const [taskCountWeek, setTaskCountWeek] = useState(0);
+  const [taskCountMonth, setTaskCountMonth] = useState(0);
+
+	useEffect(() => {
+    const fetchTasks = async (period: string, setTaskCount: (count: number) => void) => {
+      const response = await api.get(`/tasks/${period}`);
+      setTaskCount(response.data.length);
+      if (period === selectedPeriod) {
+        setTasks(response.data);
+      }
+    };
+
+    fetchTasks('today', setTaskCountToday);
+    fetchTasks('week', setTaskCountWeek);
+    fetchTasks('month', setTaskCountMonth);
+  }, [selectedPeriod]);
 
 	return (
 		<main className="p-7">
@@ -30,7 +50,13 @@ export default function Main({ dailyTasks }: any) {
 
 							<div className="grid ">
 								<div className="grid gap-10">
-									<MainMenu />
+									<MainMenu
+									selectedPeriod={selectedPeriod} 
+									taskCountToday={taskCountToday} 
+									taskCountWeek={taskCountWeek} 
+									taskCountMonth={taskCountMonth} 
+									setSelectedPeriod={setSelectedPeriod} 
+									/>
 								</div>
 							</div>
 						</div>
@@ -57,7 +83,7 @@ export default function Main({ dailyTasks }: any) {
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
 
 							<ul className='flex flex-col gap-2 w-full'>
-								{dailyTasks.map((task: Task) => (
+								{tasks.map((task: Task) => (
 									<li className='w-full' key={task.id}>
 										<ListItem
 											dateToDo={new Date(task.date)}
@@ -78,11 +104,11 @@ export default function Main({ dailyTasks }: any) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const response = await api.get('/tasks/today');
-  const dailyTasks = response.data;
+	const dailyTasks = response.data;
 
-  return {
-    props: {
-      dailyTasks,
-    },
-  };
+	return {
+		props: {
+			dailyTasks,
+		},
+	};
 };
