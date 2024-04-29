@@ -5,7 +5,8 @@ import InputTask from '@/components/Task/InputTask';
 import ListItem from '@/components/Task/ListItem';
 import api from '@/service/axios';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
 
 interface Task {
 	id: string;
@@ -15,40 +16,55 @@ interface Task {
 	duration: string;
 }
 
+interface TaskCounts {
+	today: number;
+	week: number;
+	month: number;
+	all: number;
+}
+
 export default function Main() {
 	const [selectedPeriod, setSelectedPeriod] = useState('all');
 	const [tasks, setTasks] = useState([]);
-	const [taskCountToday, setTaskCountToday] = useState(0);
-	const [taskCountWeek, setTaskCountWeek] = useState(0);
-	const [taskCountMonth, setTaskCountMonth] = useState(0);
-	const [taskCountAll, setTaskCountAll] = useState(0);
+	const [taskCounts, setTaskCounts] = useState<TaskCounts>({ today: 0, week: 0, month: 0, all: 0 });
 	const [searchValue, setSearchValue] = useState('');
-	const [searchResults, setSearchResults] = useState(null);
+	const [searchResults, setSearchResults] = useState<any[] | null>(null);
 
-	useEffect(() => {
-		if (searchValue) {
-			api.get(`/tasks/title/${searchValue}`)
-				.then(response => setSearchResults(response.data))
-				.catch(error => console.error(error));
-		} else {
-			setSearchResults(null);
-		}
-	}, [searchValue]);
+	const fetchTasks = useCallback(async (period: string) => {
+    const response = await api.get(`/tasks/${period}`);
+    setTaskCounts(prevCounts => ({ ...prevCounts, [period]: response.data.length }));
+    if (period === selectedPeriod) {
+        setTasks(response.data);
+    }
+}, [selectedPeriod]);
 
-	useEffect(() => {
-		const fetchTasks = async (period: string, setTaskCount: (count: number) => void) => {
-			const response = await api.get(`/tasks/${period}`);
-			setTaskCount(response.data.length);
-			if (period === selectedPeriod) {
-				setTasks(response.data);
+const searchTasks = useCallback(async () => {
+	if (searchValue) {
+			try {
+					const response = await api.get(`/tasks/title/${searchValue}`);
+					setSearchResults(response.data);
+			} catch (error) {
+					if ((error as AxiosError).response?.status === 404) {
+							setSearchResults([]);
+					} else {
+							console.error(error);
+					}
 			}
-		};
+	} else {
+			setSearchResults(null);
+	}
+}, [searchValue]);
 
-		fetchTasks('today', setTaskCountToday);
-		fetchTasks('week', setTaskCountWeek);
-		fetchTasks('month', setTaskCountMonth);
-		fetchTasks('all', setTaskCountAll);
-	}, [selectedPeriod]);
+	useEffect(() => {
+		searchTasks();
+	}, [searchTasks]);
+
+	useEffect(() => {
+    fetchTasks('today');
+    fetchTasks('week');
+    fetchTasks('month');
+    fetchTasks('all');
+}, [fetchTasks]);
 
 	return (
 		<main className="p-7">
@@ -65,11 +81,8 @@ export default function Main() {
 								<div className="grid gap-10">
 									<MainMenu
 										selectedPeriod={selectedPeriod}
-										taskCountToday={taskCountToday}
-										taskCountWeek={taskCountWeek}
-										taskCountMonth={taskCountMonth}
+										taskCounts={taskCounts}
 										setSelectedPeriod={setSelectedPeriod}
-										taskCountAll={taskCountAll}
 									/>
 								</div>
 							</div>
