@@ -114,7 +114,7 @@ const searchTasks = useCallback(async () => {
 						<InputTask />
 						<div className='flex flex-col w-full'>
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
-							<ul className='flex flex-col gap-2 w-full overflow-auto max-h-[550px]'>
+							<ul className='flex flex-col gap-2 w-full overflow-y-auto max-h-[700px]'>
 								{(searchResults || tasks).map((task: Task) => (
 									<li className='w-full' key={task.id}>
 										<ListItem
