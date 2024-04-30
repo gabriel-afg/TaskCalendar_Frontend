@@ -5,9 +5,15 @@ import InputTask from '@/components/Task/InputTask';
 import ListItem from '@/components/Task/ListItem';
 import Image from 'next/image';
 import { useTasks } from '@/contexts/TasksContext';
+import SearchBar from '@/components/Search/SearchBar';
+import UserProfile from '@/components/UserProfile/UserProfile';
 
 export default function Main() {
-	const { selectedPeriod, setSelectedPeriod, tasks, taskCounts = { today: 0, week: 0, month: 0, all: 0 }, searchValue, setSearchValue, createTask, searchResults } = useTasks();
+	const {
+		selectedPeriod, 
+		setSelectedPeriod, 
+		tasks, 
+		taskCounts = { today: 0, week: 0, month: 0, all: 0 }, searchValue, setSearchValue, createTask, searchResults } = useTasks();
 
 	return (
 		<main className="p-7">
@@ -31,10 +37,7 @@ export default function Main() {
 							</div>
 						</div>
 
-						<div className="flex items-center mt-auto">
-							<Image className='w-16 h-16 rounded-full mr-4 flex items-center justify-center' src="/userProfile.png" width={70} height={70} alt="Gabriel Augusto" />
-							<p className="text-[#56577E] font-bold text-cl">Gabriel Augusto</p>
-						</div>
+						<UserProfile name="Gabriel Augusto" imageSrc="/Face.jpeg" />
 					</div>
 				</Sidebar>
 
@@ -43,16 +46,7 @@ export default function Main() {
 						<div className="flex my-4 gap-x-[10px]">
 							<Icon icon="List" />
 							<h2 className='flex text-[#767798] items-center font-bold text-[16px] uppercase'>{selectedPeriod}</h2>
-							<div>
-								<input
-									className="border-2 ml-5 min-w-[300px] border-gray-300 bg-white h-10 px-3 rounded-lg text-sm focus:outline-none"
-									type="search"
-									name="search"
-									placeholder="Procurar Task por título"
-									value={searchValue}
-									onChange={e => setSearchValue(e.target.value)}
-								/>
-							</div>
+							<SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
 						</div>
 						<InputTask createTask={createTask} />
 						<div className='flex flex-col w-full'>
