@@ -7,14 +7,7 @@ import api from '@/service/axios';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
-
-interface Task {
-	id: string;
-	title: string;
-	description: string;
-	date: string;
-	duration: string;
-}
+import { NewTask, Task } from '@/@types/Task';
 
 interface TaskCounts {
 	today: number;
@@ -25,46 +18,55 @@ interface TaskCounts {
 
 export default function Main() {
 	const [selectedPeriod, setSelectedPeriod] = useState('all');
-	const [tasks, setTasks] = useState([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
 	const [taskCounts, setTaskCounts] = useState<TaskCounts>({ today: 0, week: 0, month: 0, all: 0 });
 	const [searchValue, setSearchValue] = useState('');
 	const [searchResults, setSearchResults] = useState<any[] | null>(null);
 
-	const fetchTasks = useCallback(async (period: string) => {
-    const response = await api.get(`/tasks/${period}`);
-    setTaskCounts(prevCounts => ({ ...prevCounts, [period]: response.data.length }));
-    if (period === selectedPeriod) {
-        setTasks(response.data);
+	const createTask = async (newTask: NewTask) => {
+    try {
+      const response = await api.post('/tasks', newTask);
+      fetchTasks(selectedPeriod);
+    } catch (error) {
+      console.error(error);
     }
-}, [selectedPeriod]);
+  };
 
-const searchTasks = useCallback(async () => {
-	if (searchValue) {
+	const fetchTasks = useCallback(async (period: string) => {
+		const response = await api.get(`/tasks/${period}`);
+		setTaskCounts(prevCounts => ({ ...prevCounts, [period]: response.data.length }));
+		if (period === selectedPeriod) {
+			setTasks(response.data);
+		}
+	}, [selectedPeriod]);
+
+	const searchTasks = useCallback(async () => {
+		if (searchValue) {
 			try {
-					const response = await api.get(`/tasks/title/${searchValue}`);
-					setSearchResults(response.data);
+				const response = await api.get(`/tasks/title/${searchValue}`);
+				setSearchResults(response.data);
 			} catch (error) {
-					if ((error as AxiosError).response?.status === 404) {
-							setSearchResults([]);
-					} else {
-							console.error(error);
-					}
+				if ((error as AxiosError).response?.status === 404) {
+					setSearchResults([]);
+				} else {
+					console.error(error);
+				}
 			}
-	} else {
+		} else {
 			setSearchResults(null);
-	}
-}, [searchValue]);
+		}
+	}, [searchValue]);
 
 	useEffect(() => {
 		searchTasks();
 	}, [searchTasks]);
 
 	useEffect(() => {
-    fetchTasks('today');
-    fetchTasks('week');
-    fetchTasks('month');
-    fetchTasks('all');
-}, [fetchTasks]);
+		fetchTasks('today');
+		fetchTasks('week');
+		fetchTasks('month');
+		fetchTasks('all');
+	}, [fetchTasks]);
 
 	return (
 		<main className="p-7">
@@ -111,7 +113,7 @@ const searchTasks = useCallback(async () => {
 								/>
 							</div>
 						</div>
-						<InputTask />
+						<InputTask createTask={createTask} />
 						<div className='flex flex-col w-full'>
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
 							<ul className='flex flex-col gap-2 w-full overflow-y-auto max-h-[700px]'>

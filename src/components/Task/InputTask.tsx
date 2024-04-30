@@ -1,24 +1,30 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import Styles from './InputTask.module.css';
 import { useState } from 'react';
-import api from '@/service/axios';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
+import { NewTask } from '@/@types/Task';
 
-export default function InputTask() {
+interface InputTaskProps {
+  createTask: (newTask: NewTask) => Promise<void>;
+}
+
+export default function InputTask({ createTask }: InputTaskProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [duration, setDuration] = useState('');
   const [open, setOpen] = useState(false);
 
-  const createTask = async () => {
+  const handleSubmit = async () => {
     try {
-      const response = api.post('/tasks', {
+      const newTask = {
         title,
         description,
         date: new Date(date).toISOString(),
         duration: new Date(duration).toISOString()
-      })
+      };
+
+      await createTask(newTask);
 
       setOpen(true);
     } catch (error) {
@@ -103,7 +109,7 @@ export default function InputTask() {
               <Dialog.Close asChild>
                 <button
                   className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
-                  onClick={createTask}
+                  onClick={handleSubmit}
                 >
                   Criar tarefa
                 </button>
