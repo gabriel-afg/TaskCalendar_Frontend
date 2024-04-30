@@ -20,6 +20,8 @@ interface TaskContextData {
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
   createTask: (newTask: NewTask) => Promise<void>;
   fetchTasks: (period: string) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
+  updateTask: (taskId: string, updatedTask: NewTask) => Promise<void>;
 }
 
 export const TaskContext = createContext<TaskContextData>({} as TaskContextData);
@@ -47,6 +49,30 @@ export const TaskProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
         month: taskDate.getMonth() === today.getMonth() ? prevCounts.month + 1 : prevCounts.month,
         all: prevCounts.all + 1
       }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      // Remover a tarefa da lista de tarefas
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+      // Atualizar os contadores de tarefas
+      // ...
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateTask = async (taskId: string, updatedTask: NewTask) => {
+    try {
+      await api.put(`/tasks/${taskId}`, updatedTask);
+      // Atualizar a tarefa na lista de tarefas
+      setTasks(prevTasks => prevTasks.map(task => task.id === taskId ? { ...task, ...updatedTask } : task));
+      // Atualizar os contadores de tarefas
+      // ...
     } catch (error) {
       console.error(error);
     }
@@ -89,7 +115,20 @@ export const TaskProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   }, [fetchTasks]);
 
   return (
-    <TaskContext.Provider value={{ selectedPeriod, tasks, taskCounts, searchValue, searchResults, setSelectedPeriod, setSearchValue, createTask, fetchTasks }}>
+    <TaskContext.Provider
+    value={{
+      selectedPeriod, 
+      tasks, 
+      taskCounts, 
+      searchValue, 
+      searchResults, 
+      setSelectedPeriod, 
+      setSearchValue, 
+      createTask, 
+      fetchTasks,
+      deleteTask,
+      updateTask
+    }}>
       {children}
     </TaskContext.Provider>
   );

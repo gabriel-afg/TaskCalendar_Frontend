@@ -3,17 +3,22 @@ import { MainMenu } from '@/components/Menu/MainMenu';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import InputTask from '@/components/Task/InputTask';
 import ListItem from '@/components/Task/ListItem';
-import Image from 'next/image';
 import { useTasks } from '@/contexts/TasksContext';
 import SearchBar from '@/components/Search/SearchBar';
 import UserProfile from '@/components/UserProfile/UserProfile';
 
 export default function Main() {
 	const {
-		selectedPeriod, 
-		setSelectedPeriod, 
-		tasks, 
-		taskCounts = { today: 0, week: 0, month: 0, all: 0 }, searchValue, setSearchValue, createTask, searchResults } = useTasks();
+		selectedPeriod,
+		setSelectedPeriod,
+		tasks,
+		taskCounts = { today: 0, week: 0, month: 0, all: 0 },
+		searchValue,
+		setSearchValue,
+		createTask,
+		searchResults,
+		updateTask
+	} = useTasks();
 
 	return (
 		<main className="p-7">
@@ -55,6 +60,8 @@ export default function Main() {
 								{(searchResults || tasks || []).map((task) => (
 									<li className='w-full' key={task.id}>
 										<ListItem
+											task={task}
+											updateTask={updateTask}
 											dateToDo={new Date(task.date)}
 											description={task.description}
 											isDone={false}
