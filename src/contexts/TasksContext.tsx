@@ -1,54 +1,104 @@
-import api from "@/service/axios";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, useState, useCallback, useEffect, useContext } from 'react';
+import api from '@/service/axios';
+import { NewTask, Task } from '@/@types/Task';
+import { AxiosError } from 'axios';
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  duration: string;
+interface TaskCounts {
+  today: number;
+  week: number;
+  month: number;
+  all: number;
 }
 
-interface TasksContextData {
-  dailyTasks: Task[];
-  fetchDailyTasks: () => Promise<void>;
-  weeklyTasks: Task[];
-  fetchWeeklyTasks: () => Promise<void>;
-  monthlyTasks: Task[];
-  fetchMonthlyTasks: () => Promise<void>;
+interface TaskContextData {
+  selectedPeriod: string;
+  tasks: Task[];
+  taskCounts: TaskCounts;
+  searchValue: string;
+  searchResults: any[] | null;
+  setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
+  createTask: (newTask: NewTask) => Promise<void>;
+  fetchTasks: (period: string) => Promise<void>;
 }
 
-interface TasksProviderProps {
-  children: ReactNode;
-}
+export const TaskContext = createContext<TaskContextData>({} as TaskContextData);
 
-export const TasksContext = createContext({} as TasksContextData);
+export const TaskProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [taskCounts, setTaskCounts] = useState<TaskCounts>({ today: 0, week: 0, month: 0, all: 0 });
+  const [searchValue, setSearchValue] = useState('');
+  const [searchResults, setSearchResults] = useState<any[] | null>(null);
 
-export function TasksProvider({ children }: TasksProviderProps) {
-  const [dailyTasks, setDailyTasks] = useState<Task[]>([]);
-  const [weeklyTasks, setWeeklyTasks] = useState<Task[]>([]);
-  const [monthlyTasks, setMonthlyTasks] = useState<Task[]>([]);
+  const createTask = async (newTask: NewTask) => {
+    try {
+      const response = await api.post('/tasks', newTask);
+      const createdTask = response.data;
 
-  async function fetchDailyTasks() {
-    const response = await fetch('/api/tasks/today');
-    const data = await response.json();
-    console.log(data);
-    setDailyTasks(data);
-  }
+      setTasks(prevTasks => [...prevTasks, createdTask]);
 
-  const fetchWeeklyTasks = async () => {
-    const response = await api.get('/tasks/week');
-    setWeeklyTasks(response.data);
-  }
+      const today = new Date();
+      const taskDate = new Date(createdTask.date);
+      setTaskCounts(prevCounts => ({
+        ...prevCounts,
+        today: taskDate.toDateString() === today.toDateString() ? prevCounts.today + 1 : prevCounts.today,
+        week: taskDate.getTime() - today.getTime() <= 7 * 24 * 60 * 60 * 1000 ? prevCounts.week + 1 : prevCounts.week,
+        month: taskDate.getMonth() === today.getMonth() ? prevCounts.month + 1 : prevCounts.month,
+        all: prevCounts.all + 1
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const fetchMonthlyTasks = async () => {
-    const response = await api.get('/tasks/month');
-    setMonthlyTasks(response.data);
-  }
+  const fetchTasks = useCallback(async (period: string) => {
+    const response = await api.get(`/tasks/${period}`);
+    setTaskCounts(prevCounts => ({ ...prevCounts, [period]: response.data.length }));
+    if (period === selectedPeriod) {
+      setTasks(response.data);
+    }
+  }, [selectedPeriod]);
+
+  const searchTasks = useCallback(async () => {
+    if (searchValue) {
+      try {
+        const response = await api.get(`/tasks/title/${searchValue}`);
+        setSearchResults(response.data);
+      } catch (error) {
+        if ((error as AxiosError).response?.status === 404) {
+          setSearchResults([]);
+        } else {
+          console.error(error);
+        }
+      }
+    } else {
+      setSearchResults(null);
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
+    searchTasks();
+  }, [searchTasks]);
+
+  useEffect(() => {
+    fetchTasks('today');
+    fetchTasks('week');
+    fetchTasks('month');
+    fetchTasks('all');
+  }, [fetchTasks]);
 
   return (
-    <TasksContext.Provider value={{ dailyTasks, fetchDailyTasks, weeklyTasks, fetchWeeklyTasks, monthlyTasks, fetchMonthlyTasks }}>
+    <TaskContext.Provider value={{ selectedPeriod, tasks, taskCounts, searchValue, searchResults, setSelectedPeriod, setSearchValue, createTask, fetchTasks }}>
       {children}
-    </TasksContext.Provider>
-  )
+    </TaskContext.Provider>
+  );
+};
+
+export function useTasks() {
+  const context = useContext(TaskContext);
+  if (!context) {
+    throw new Error('useTasks must be used within a TaskProvider');
+  }
+  return context;
 }
