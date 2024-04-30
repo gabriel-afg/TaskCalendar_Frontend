@@ -24,13 +24,25 @@ export default function Main() {
 	const [searchResults, setSearchResults] = useState<any[] | null>(null);
 
 	const createTask = async (newTask: NewTask) => {
-    try {
-      const response = await api.post('/tasks', newTask);
-      fetchTasks(selectedPeriod);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+		try {
+			const response = await api.post('/tasks', newTask);
+			const createdTask = response.data;
+	
+			setTasks(prevTasks => [...prevTasks, createdTask]);
+	
+			const today = new Date();
+			const taskDate = new Date(createdTask.date);
+			setTaskCounts(prevCounts => ({
+				...prevCounts,
+				today: taskDate.toDateString() === today.toDateString() ? prevCounts.today + 1 : prevCounts.today,
+				week: taskDate.getTime() - today.getTime() <= 7 * 24 * 60 * 60 * 1000 ? prevCounts.week + 1 : prevCounts.week,
+				month: taskDate.getMonth() === today.getMonth() ? prevCounts.month + 1 : prevCounts.month,
+				all: prevCounts.all + 1
+			}));
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const fetchTasks = useCallback(async (period: string) => {
 		const response = await api.get(`/tasks/${period}`);
