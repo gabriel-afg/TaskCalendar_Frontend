@@ -57,10 +57,7 @@ export const TaskProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const deleteTask = async (taskId: string) => {
     try {
       await api.delete(`/tasks/${taskId}`);
-      // Remover a tarefa da lista de tarefas
       setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      // Atualizar os contadores de tarefas
-      // ...
     } catch (error) {
       console.error(error);
     }
@@ -69,10 +66,7 @@ export const TaskProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const updateTask = async (taskId: string, updatedTask: NewTask) => {
     try {
       await api.put(`/tasks/${taskId}`, updatedTask);
-      // Atualizar a tarefa na lista de tarefas
       setTasks(prevTasks => prevTasks.map(task => task.id === taskId ? { ...task, ...updatedTask } : task));
-      // Atualizar os contadores de tarefas
-      // ...
     } catch (error) {
       console.error(error);
     }

@@ -22,7 +22,7 @@ export default function Main() {
 
 	return (
 		<main className="p-7">
-			<div className="container mx-auto bg-white flex rounded-[20px] shadow-md overflow-hidden">
+			<div className="container mx-auto bg-white flex rounded-[20px] shadow-md">
 				<Sidebar>
 					<div className="flex flex-col justify-between h-full">
 						<div>
@@ -46,7 +46,7 @@ export default function Main() {
 					</div>
 				</Sidebar>
 
-				<div className="p-7 w-full">
+				<div className="p-7 w-full overflow-x-auto">
 					<div>
 						<div className="flex my-4 gap-x-[10px]">
 							<Icon icon="List" />
@@ -56,7 +56,7 @@ export default function Main() {
 						<InputTask createTask={createTask} />
 						<div className='flex flex-col w-full'>
 							<h3 className='text-[#94A1B7] font-bold text-[12px] my-5'>Para fazer</h3>
-							<ul className='flex flex-col gap-2 w-full overflow-y-auto max-h-[700px]'>
+							<ul className='flex flex-col gap-2 w-full overflow-y-auto h-[400px]'>
 								{(searchResults || tasks || []).map((task) => (
 									<li className='w-full' key={task.id}>
 										<ListItem

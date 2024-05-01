@@ -3,10 +3,11 @@ import EditTaskDialog from './EditTaskDialog';
 import { useState } from 'react';
 import { FormCheckbox } from '../Form/FormCheckbox';
 import Styles from './ListItem.module.css';
+import { FaTrash, FaPencilAlt } from 'react-icons/fa';
 import { NewTask, Task } from '@/@types/Task';
 
 type ListItemProps = {
-  task: Task; 
+  task: Task;
   children: React.ReactNode;
   dateToDo: Date;
   isDone: boolean;
@@ -48,8 +49,12 @@ export default function ListItem({ task, children, dateToDo, isDone, description
       </div>
       <div className={Styles.props}>
         <div className="break-keep">{formattedDate}</div>
-        <button onClick={() => deleteTask(task.id)}>Excluir</button>
-        <button onClick={openEditDialog}>Editar</button>
+        <button onClick={() => deleteTask(task.id)}>
+          <FaTrash />
+        </button>
+        <button onClick={openEditDialog}>
+          <FaPencilAlt />
+        </button>
       </div>
     </div>
   )

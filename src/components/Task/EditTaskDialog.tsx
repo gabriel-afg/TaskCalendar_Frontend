@@ -27,7 +27,7 @@ export default function EditTaskDialog({ task, updateTask, onClose, isOpen }: Ed
         duration: new Date(duration).toISOString()
       };
   
-      await updateTask(task.id, updatedTask); // Adicione task.id aqui
+      await updateTask(task.id, updatedTask);
       onClose();
     } catch (error) {
       console.error(error);
